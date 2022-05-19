@@ -1,0 +1,35 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "ca.rttv",
+		"id": "nbttooltip",
+		"version": "${version}",
+		"metadata": {
+			"name": "NBT Tooltip",
+			"description": "Displays NBT when holding shift over an item",
+			"contributors": {
+				"RTTV": "Owner"
+			},
+			"contact": {
+				"sources": "https://github.com/RTTV/nbttooltip"
+			},
+			"icon": "assets/nbttooltip/icon.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.16.0-"
+			},
+			{
+				"id": "minecraft",
+				"versions": ">=1.18.2"
+			}
+		]
+	},
+	"mixin": "nbttooltip.mixins.json",
+	"access_widener": "nbttooltip.accesswidener"
+}
