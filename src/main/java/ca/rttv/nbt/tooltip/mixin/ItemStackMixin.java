@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -24,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Mixin(ItemStack.class)
@@ -50,10 +50,10 @@ abstract class ItemStackMixin {
             if (!text.equals("null")) {
                 String[] strings = splitString(150, text);
                 for (String str : strings) {
-                    list.add(new LiteralText(str));
+                    list.add(Text.literal(str));
                 }
             } else {
-                list.add(new LiteralText("null").styled(style -> style.withColor(Formatting.DARK_GRAY)));
+                list.add(Text.literal("null").styled(style -> style.withColor(Formatting.DARK_GRAY)));
             }
             //noinspection ConstantConditions
             cachedItemStack.set(stack -> (Object) this == stack && this.getNbt() == stack.getNbt() ? list : null);
@@ -99,7 +99,7 @@ abstract class ItemStackMixin {
 
     private StringBuilder toFormattedString(Text text, StringBuilder sb) {
         TextColor color = text.getStyle().getColor();
-        sb.append(Formatting.byName(color == null ? TextColor.fromFormatting(Formatting.WHITE).getName() : color.getName()).toString().concat(text.asString()));
+        sb.append(Formatting.byName(color == null ? TextColor.fromFormatting(Formatting.WHITE).getName() : color.getName()).toString().concat(text.asComponent().visit(Optional::of).orElse("")));
         text.getSiblings().forEach(sibling -> toFormattedString(sibling, sb));
         return sb;
     }
