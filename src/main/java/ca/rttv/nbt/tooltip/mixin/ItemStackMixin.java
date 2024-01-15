@@ -29,7 +29,7 @@ import java.util.function.Function;
 @Mixin(ItemStack.class)
 abstract class ItemStackMixin {
     @Unique
-    private static final ThreadLocal<Function<ItemStack, List<Text>>> cachedItemStack = ThreadLocal.withInitial(() -> (stack -> null));
+    private static Function<ItemStack, List<Text>> cachedItemStack = stack -> null;
 
     @Shadow
     public abstract @Nullable NbtCompound getNbt();
@@ -41,7 +41,7 @@ abstract class ItemStackMixin {
     public void getTooltip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, List<Text> list, MutableText mutableText) {
         final MinecraftClient client = MinecraftClient.getInstance();
         if (Screen.hasShiftDown()) {
-            List<Text> cache = cachedItemStack.get().apply((ItemStack) (Object) this);
+            List<Text> cache = cachedItemStack.apply((ItemStack) (Object) this);
             if (cache != null) {
                 cir.setReturnValue(cache);
                 return;
@@ -56,7 +56,7 @@ abstract class ItemStackMixin {
                 list.add(Text.literal("null").styled(style -> style.withColor(Formatting.DARK_GRAY)));
             }
             //noinspection ConstantConditions
-            cachedItemStack.set(stack -> (Object) this == stack && this.getNbt() == stack.getNbt() ? list : null);
+            cachedItemStack = stack -> (Object) this == stack && this.getNbt() == stack.getNbt() ? list : null;
             if (client.currentScreen != null) {
                 ((ScreenDuck) client.currentScreen).resetYOffset();
             }

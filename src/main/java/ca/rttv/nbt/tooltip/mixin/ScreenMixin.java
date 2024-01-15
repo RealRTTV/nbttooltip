@@ -5,14 +5,14 @@ import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(Screen.class)
 abstract class ScreenMixin implements ScreenDuck {
     @Unique
     private double yOffset;
 
-    @ModifyVariable(method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V", at = @At("HEAD"), argsOnly = true, index = 4)
+    @ModifyArg(method = "renderWithTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Lnet/minecraft/client/gui/tooltip/TooltipPositioner;II)V"), index = 4)
     private int renderTooltipFromComponents(int y) {
         return Screen.hasShiftDown() ? y + (int) this.yOffset : y;
     }
